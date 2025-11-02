@@ -165,6 +165,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       <EditorContent
         editor={editor}
         className="prose prose-sm max-w-none focus:outline-none p-4 min-h-[300px]"
+        data-placeholder={placeholder}
         style={{ minHeight: '300px' }}
       />
     </div>

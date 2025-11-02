@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { useAuth } from '../lib/AuthContext';
-import { LogOut, NotebookPen, User } from 'lucide-react';
+import { LogOut, Edit, User } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { isLoggedIn, logout, user } = useAuth();
@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
     <nav className="bg-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold text-indigo-600 flex items-center gap-2">
-          <NotebookPen className="h-6 w-6" />
+          <Edit className="h-6 w-6" />
           Blog App
         </Link>
 
