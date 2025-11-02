@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -12,7 +12,10 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
+  const state = location.state as { from?: { pathname: string } } | undefined;
+  const from = state?.from?.pathname ?? '/home';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +24,7 @@ const Login: React.FC = () => {
 
     try {
       await login(email, password);
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (err: any) {
       setError(err.message || 'Login failed');
     } finally {

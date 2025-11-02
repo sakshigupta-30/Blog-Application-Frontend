@@ -21,4 +21,5 @@ export interface AuthContextType {
   register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   isLoggedIn: boolean;
+  isAuthReady: boolean;
 }

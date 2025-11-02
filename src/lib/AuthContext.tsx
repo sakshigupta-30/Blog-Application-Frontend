@@ -8,16 +8,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAuthReady, setIsAuthReady] = useState(false);
 
   // Check if user is logged in on mount
   useEffect(() => {
-    const savedToken = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-      setIsLoggedIn(true);
-    }
+    const initializeAuth = async () => {
+      const savedToken = localStorage.getItem('token');
+      if (!savedToken) {
+        localStorage.removeItem('user');
+        setIsAuthReady(true);
+        return;
+      }
+
+      try {
+        const response = await apiClient.get<{ user: User }>('/auth/me');
+        const userData = response.data.user;
+        setToken(savedToken);
+        setUser(userData);
+        setIsLoggedIn(true);
+        localStorage.setItem('user', JSON.stringify(userData));
+      } catch (error) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setToken(null);
+        setUser(null);
+        setIsLoggedIn(false);
+      } finally {
+        setIsAuthReady(true);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
   const register = async (username: string, email: string, password: string) => {
@@ -48,6 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
     setToken(null);
     setIsLoggedIn(false);
+    setIsAuthReady(true);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   };
@@ -59,6 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     register,
     logout,
     isLoggedIn,
+    isAuthReady,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
