@@ -13,6 +13,23 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    // Add SPA fallback middleware
+    middlewareMode: false,
+    middlewares: [
+      (req, res, next) => {
+        // Allow all /api requests to pass through
+        if (req.url?.startsWith('/api')) {
+          return next();
+        }
+        
+        // For all other non-file requests, serve index.html
+        // This allows client-side routing to handle the path
+        if (!req.url?.includes('.') && req.method === 'GET') {
+          req.url = '/index.html';
+        }
+        next();
+      },
+    ],
   },
   resolve: {
     alias: {
